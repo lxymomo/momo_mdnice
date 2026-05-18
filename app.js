@@ -39,6 +39,10 @@ const App = (() => {
 
   // ── 复制到公众号 ──
   document.getElementById('btn-copy').addEventListener('click', () => {
+    // 用当前canvas封面重新渲染一次，把base64注入
+    const coverBase64 = CoverGen.getDataURL();
+    preview.innerHTML = saltParser(editor.value, coverBase64);
+
     const range = document.createRange();
     range.selectNodeContents(preview);
     const sel = window.getSelection();
@@ -46,6 +50,9 @@ const App = (() => {
     sel.addRange(range);
     document.execCommand('copy');
     sel.removeAllRanges();
+
+    // 恢复预览（不带封面base64的普通预览）
+    renderPreview();
     showToast();
   });
 

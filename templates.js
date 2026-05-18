@@ -84,17 +84,26 @@ const SALT_STYLE = {
 
     renderFooter: () => `
         <section style="text-align: right; margin: 30px 15px 10px; padding-right: 10px; box-sizing: border-box;">
-            <svg viewBox="0 0 44 32" width="52" style="display: inline-block; vertical-align: bottom; margin-right: 8px;">
-                <path d="M 0 5 C 0 2 2 0 5 0 h 34 C 42 0 44 2 44 5 v 16 C 44 24 42 26 39 26 h -8 l -4 6 l -4 -6 h -18 C 2 26 0 24 0 21 z" fill="rgb(62,97,61)"/>
-                <text x="22" y="17" fill="#fff" font-size="11" text-anchor="middle">求分享</text>
+            <svg viewBox="0 0 44 32" width="44" height="32" style="display: inline-block; vertical-align: bottom; margin-right: 10px;" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                    <animateTransform attributeName="transform" type="translate" values="0,0; 0,-5; 0,0" dur="2s" repeatCount="indefinite" begin="0s"/>
+                    <path d="M 0 5 C 0 2 2 0 5 0 h 34 C 42 0 44 2 44 5 v 16 C 44 24 42 26 39 26 h -8 l -4 6 l -4 -6 h -18 C 2 26 0 24 0 21 z" fill="rgb(62,97,61)"/>
+                    <text x="22" y="17" fill="#fff" font-size="11" text-anchor="middle">求分享</text>
+                </g>
             </svg>
-            <svg viewBox="0 0 44 32" width="52" style="display: inline-block; vertical-align: bottom; margin-right: 8px;">
-                <path d="M 0 5 C 0 2 2 0 5 0 h 34 C 42 0 44 2 44 5 v 16 C 44 24 42 26 39 26 h -8 l -4 6 l -4 -6 h -18 C 2 26 0 24 0 21 z" fill="rgb(62,97,61)"/>
-                <text x="22" y="17" fill="#fff" font-size="11" text-anchor="middle">求点赞</text>
+            <svg viewBox="0 0 44 32" width="44" height="32" style="display: inline-block; vertical-align: bottom; margin-right: 10px;" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                    <animateTransform attributeName="transform" type="translate" values="0,0; 0,-5; 0,0" dur="2s" repeatCount="indefinite" begin="0.3s"/>
+                    <path d="M 0 5 C 0 2 2 0 5 0 h 34 C 42 0 44 2 44 5 v 16 C 44 24 42 26 39 26 h -8 l -4 6 l -4 -6 h -18 C 2 26 0 24 0 21 z" fill="rgb(62,97,61)"/>
+                    <text x="22" y="17" fill="#fff" font-size="11" text-anchor="middle">求点赞</text>
+                </g>
             </svg>
-            <svg viewBox="0 0 44 32" width="52" style="display: inline-block; vertical-align: bottom;">
-                <path d="M 0 5 C 0 2 2 0 5 0 h 34 C 42 0 44 2 44 5 v 16 C 44 24 42 26 39 26 h -8 l -4 6 l -4 -6 h -18 C 2 26 0 24 0 21 z" fill="rgb(62,97,61)"/>
-                <text x="22" y="17" fill="#fff" font-size="11" text-anchor="middle">求在看</text>
+            <svg viewBox="0 0 44 32" width="44" height="32" style="display: inline-block; vertical-align: bottom;" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                    <animateTransform attributeName="transform" type="translate" values="0,0; 0,-5; 0,0" dur="2s" repeatCount="indefinite" begin="0.6s"/>
+                    <path d="M 0 5 C 0 2 2 0 5 0 h 34 C 42 0 44 2 44 5 v 16 C 44 24 42 26 39 26 h -8 l -4 6 l -4 -6 h -18 C 2 26 0 24 0 21 z" fill="rgb(62,97,61)"/>
+                    <text x="22" y="17" fill="#fff" font-size="11" text-anchor="middle">求在看</text>
+                </g>
             </svg>
         </section>
         <section style="text-align: center; margin: 20px 0 20px; font-size: 12px; color: #999;">
