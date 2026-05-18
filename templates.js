@@ -84,23 +84,13 @@ const SALT_STYLE = {
 
     renderFooter: () => `
         <section style="text-align: right; margin: 30px 15px 10px; padding-right: 10px; box-sizing: border-box;">
-            <svg viewBox="0 0 180 40" width="160" style="display: inline-block; vertical-align: bottom;">
-                <g>
-                    <animateTransform attributeName="transform" type="translate" values="0,0; 0,-5; 0,0" dur="2s" repeatCount="indefinite" begin="0s"/>
-                    <path d="M 0 5 C 0 2 2 0 5 0 h 34 C 42 0 44 2 44 5 v 16 C 44 24 42 26 39 26 h -8 l -4 6 l -4 -6 h -18 C 2 26 0 24 0 21 z" fill="rgb(62,97,61)"/>
-                    <text x="22" y="17" fill="#fff" font-size="11" text-anchor="middle">求分享</text>
-                </g>
-                <g>
-                    <animateTransform attributeName="transform" type="translate" values="60,0; 60,-5; 60,0" dur="2s" repeatCount="indefinite" begin="0.3s"/>
-                    <path d="M 0 5 C 0 2 2 0 5 0 h 34 C 42 0 44 2 44 5 v 16 C 44 24 42 26 39 26 h -8 l -4 6 l -4 -6 h -18 C 2 26 0 24 0 21 z" fill="rgb(62,97,61)"/>
-                    <text x="22" y="17" fill="#fff" font-size="11" text-anchor="middle">求点赞</text>
-                </g>
-                <g>
-                    <animateTransform attributeName="transform" type="translate" values="120,0; 120,-5; 120,0" dur="2s" repeatCount="indefinite" begin="0.6s"/>
-                    <path d="M 0 5 C 0 2 2 0 5 0 h 34 C 42 0 44 2 44 5 v 16 C 44 24 42 26 39 26 h -8 l -4 6 l -4 -6 h -18 C 2 26 0 24 0 21 z" fill="rgb(62,97,61)"/>
-                    <text x="22" y="17" fill="#fff" font-size="11" text-anchor="middle">求在看</text>
-                </g>
-            </svg>
+            <section style="display: inline-flex; gap: 12px; align-items: flex-end;">
+                ${['求分享','求点赞','求在看'].map(label => `
+                <section style="position: relative; display: inline-block;">
+                    <section style="background: rgb(62,97,61); color: #fff; font-size: 12px; padding: 5px 10px; border-radius: 5px; white-space: nowrap;">${label}</section>
+                    <section style="width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid rgb(62,97,61); margin: 0 auto;"></section>
+                </section>`).join('')}
+            </section>
         </section>
         <section style="text-align: center; margin: 20px 0 20px; font-size: 12px; color: #999;">
             <p style="margin:0;">—— The End ——</p>
