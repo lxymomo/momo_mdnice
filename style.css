@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "汉仪晓雪优雅体 75简";
+  src: url("assets/fonts/hanyixiaoxueyouya75j.ttf") format("truetype");
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {

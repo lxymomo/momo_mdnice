@@ -31,11 +31,11 @@
     <canvas id="cover-canvas" width="900" height="500"></canvas>
     <div class="cover-controls">
       <label>封面标题
-        <input type="text" id="cover-title-input" placeholder="输入封面标题...">
+        <textarea id="cover-title-input" placeholder="输入封面标题（Enter换行）" rows="3" style="resize:vertical;width:100%;box-sizing:border-box;"></textarea>
       </label>
       <label>背景图 <input type="file" id="cover-bg-upload" accept="image/*"></label>
       <label>字色 <input type="color" id="cover-text-color" value="#ffffff"></label>
-      <label>字号 <input type="range" id="cover-font-size" min="28" max="80" value="48"></label>
+      <label>字号 <input type="range" id="cover-font-size" min="28" max="80" value="65"></label>
       <button id="btn-update-cover">🔄 更新封面</button>
       <button id="btn-download-cover">⬇ 下载封面</button>
     </div>

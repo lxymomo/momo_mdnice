@@ -16,35 +16,40 @@ const CoverGen = (() => {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 
-  function drawTitle(title, textColor, fontSize) {
+  function drawTitle(title, fontSize) {
     ctx.save();
-    ctx.textAlign = 'center';
+    ctx.font = `bold ${fontSize}px "汉仪晓雪优雅体 75简", serif`;
+    ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
-    ctx.font = `bold ${fontSize}px "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif`;
 
-    const maxWidth = canvas.width * 0.75;
-    const words = title.split('');
-    let line = '';
+    const leftX = canvas.width * 0.08;
+    const maxWidth = canvas.width * 0.55;
+
     const lines = [];
-    for (let ch of words) {
-      const test = line + ch;
-      if (ctx.measureText(test).width > maxWidth && line) {
-        lines.push(line);
-        line = ch;
-      } else {
-        line = test;
+    for (const seg of title.split('\n')) {
+      const words = seg.split('');
+      let line = '';
+      for (let ch of words) {
+        const test = line + ch;
+        if (ctx.measureText(test).width > maxWidth && line) {
+          lines.push(line);
+          line = ch;
+        } else {
+          line = test;
+        }
       }
+      lines.push(line);
     }
-    if (line) lines.push(line);
 
     const lineHeight = fontSize * 1.4;
     const totalH = lines.length * lineHeight;
     const startY = canvas.height / 2 - totalH / 2 + lineHeight / 2;
 
-    ctx.fillStyle = textColor;
-    lines.forEach((l, idx) => {
-      ctx.fillText(l, canvas.width / 2, startY + idx * lineHeight);
-    });
+  ctx.fillStyle = 'rgba(255,255,255,1)';
+  ctx.letterSpacing = "0.1em";
+  lines.forEach((l, idx) => {
+    ctx.fillText(l, leftX, startY + idx * lineHeight);
+  });
 
     ctx.restore();
   }
@@ -63,7 +68,7 @@ const CoverGen = (() => {
       drawFallbackBg();
     }
 
-    if (title) drawTitle(title, textColor, fontSize);
+    if (title) drawTitle(title, fontSize);
   }
 
   // 加载默认背景（把你的图放 assets/cover-bg.png）
