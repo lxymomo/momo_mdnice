@@ -129,9 +129,9 @@ const App = (() => {
   }
 
   // ── 初始化 ──
-  const DEFAULT_MD = `# 文章标题
-
-## 开篇
+  const DEFAULT_MD = `
+  
+# 01 章节
 
 在这里写你的内容...
 
