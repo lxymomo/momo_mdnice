@@ -2,10 +2,11 @@
 
 function formatInline(text) {
     let escaped = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-    // ✅ 加粗：深墨绿色字 + 极浅绿底色，像克制的荧光笔效果
+    // 加粗颜色跟主题走，fallback 到绿色系
+    const boldColor  = (typeof SALT_STYLE !== 'undefined' && SALT_STYLE.boldColor)  || '#1A3A1A';
+    const boldBg     = (typeof SALT_STYLE !== 'undefined' && SALT_STYLE.boldBg)     || '#E4EFE3';
     return escaped.replace(/\*\*(.*?)\*\*/g,
-        `<strong style="color: rgb(38, 70, 38); background-color: #E4EFE3; padding: 1px 3px; border-radius: 3px; box-sizing: border-box;">$1</strong>`
+        `<strong style="color:${boldColor};background-color:${boldBg};padding:1px 4px;border-radius:3px;box-sizing:border-box;">$1</strong>`
     );
 }
 
@@ -19,9 +20,12 @@ function saltParser(mdText, coverBase64 = null) {
 
     let lines = mdText.split('\n');
     let finalHtml = SALT_STYLE.renderTopHeader(coverBase64);
-    
+
     let i = 0;
     let pGroup = [];
+    let h1Counter = 0;
+
+    let pCounter = 0;
 
     function flushP() {
         if (pGroup.length > 0) {
@@ -31,27 +35,28 @@ function saltParser(mdText, coverBase64 = null) {
         }
     }
 
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
     while (i < lines.length) {
         let line = lines[i];
         let trimmed = line.trim();
 
+        // 空行
         if (!trimmed) {
             flushP();
             let j = i + 1;
             let extraBlanks = 0;
-            while(j < lines.length && lines[j].trim() === '') {
-                extraBlanks++;
-                j++;
-            }
+            while (j < lines.length && lines[j].trim() === '') { extraBlanks++; j++; }
             if (extraBlanks > 0) {
-                for(let k = 0; k < extraBlanks; k++) {
-                    finalHtml += `<section style="${SALT_STYLE.sectionStyle}"><p style="margin:0 0 15px; padding:0;"><br></p></section>`;
+                for (let k = 0; k < extraBlanks; k++) {
+                    finalHtml += `<section style="${SALT_STYLE.sectionStyle}"><p style="margin:0 0 15px;padding:0;"><br></p></section>`;
                 }
             }
-            i = j; 
+            i = j;
             continue;
         }
 
+        // 分割线
         if (/^---+$/.test(trimmed)) {
             flushP();
             finalHtml += SALT_STYLE.renderHr();
@@ -59,53 +64,67 @@ function saltParser(mdText, coverBase64 = null) {
             continue;
         }
 
+        // Card
         let cardMatch = trimmed.match(/^__CARD_(\d+)__$/);
         if (cardMatch) {
             flushP();
             let cardContent = cardBlocks[parseInt(cardMatch[1])];
             let cardHtml = cardContent.split('\n').map(l => {
                 let lt = l.trim();
-                return lt
-                    ? `<p style="margin: 0 0 6px 0;">${formatInline(lt)}</p>`
-                    : `<p style="margin: 0;"><br></p>`;
+                return lt ? `<p style="margin:0 0 6px 0;">${formatInline(lt)}</p>`
+                          : `<p style="margin:0;"><br></p>`;
             }).join('');
             finalHtml += SALT_STYLE.renderCard(cardHtml);
             i++;
             continue;
         }
 
-        if (trimmed.startsWith('# ')) {
+        // ── 标题：注意顺序，长前缀优先 ──────────────────────────────
+        // #### → H3（最小层级）
+        if (trimmed.startsWith('#### ')) {
             flushP();
-            const h1Match = trimmed.match(/^#\s+(\d+)\s+(.*)/);
-            if (h1Match) {
-                finalHtml += SALT_STYLE.renderH1(h1Match[1], h1Match[2]);
-            } else {
-                finalHtml += SALT_STYLE.renderH1('', trimmed.replace(/^#\s+/, ''));
-            }
+            finalHtml += SALT_STYLE.renderH3(trimmed.replace(/^####\s+/, ''));
             i++;
             continue;
         }
-
+        // ### → H2（小节）
+        if (trimmed.startsWith('### ')) {
+            flushP();
+            finalHtml += SALT_STYLE.renderH2(trimmed.replace(/^###\s+/, ''));
+            i++;
+            continue;
+        }
+        // ## → H1（大章节，自动序号）
         if (trimmed.startsWith('## ')) {
             flushP();
-            finalHtml += SALT_STYLE.renderH2(trimmed.replace(/^##\s+/, ''));
+            h1Counter++;
+            finalHtml += SALT_STYLE.renderH1(pad(h1Counter), trimmed.replace(/^##\s+/, ''));
             i++;
             continue;
         }
+        // # → 文章大标题，只渲染文字，不加序号，不参与计数
+        if (trimmed.startsWith('# ')) {
+            flushP();
+            finalHtml += SALT_STYLE.renderTitle(trimmed.replace(/^#\s+/, ''));
+            i++;
+            continue;
+        }
+        // ─────────────────────────────────────────────────────────────
 
+        // 引用
         if (trimmed.startsWith('>')) {
             flushP();
             let quoteHtml = '';
             while (i < lines.length) {
                 let currTrim = lines[i].trim();
                 if (currTrim.startsWith('>')) {
-                    quoteHtml += `<p style="margin: 0px 0px 4px;">${formatInline(currTrim.replace(/^>\s*/, ''))}</p>`;
+                    quoteHtml += `<p style="margin:0 0 4px;">${formatInline(currTrim.replace(/^>\s*/, ''))}</p>`;
                     i++;
                 } else if (currTrim === '') {
                     let j = i + 1;
-                    while(j < lines.length && lines[j].trim() === '') j++;
+                    while (j < lines.length && lines[j].trim() === '') j++;
                     if (j < lines.length && lines[j].trim().startsWith('>')) {
-                        quoteHtml += `<p style="margin: 0;"><br></p>`;
+                        quoteHtml += `<p style="margin:0;"><br></p>`;
                         i = j;
                     } else { break; }
                 } else { break; }
@@ -114,33 +133,34 @@ function saltParser(mdText, coverBase64 = null) {
             continue;
         }
 
+        // 列表：收集所有连续项，整体传给 renderList
         if (/^[-*]\s/.test(trimmed)) {
             flushP();
-            let listHtml = '';
+            let items = [];
             while (i < lines.length) {
                 let currTrim = lines[i].trim();
                 if (/^[-*]\s/.test(currTrim)) {
-                    let text = formatInline(currTrim.replace(/^[-*]\s/, ''));
-                    listHtml += SALT_STYLE.renderListItem(text);
+                    items.push(formatInline(currTrim.replace(/^[-*]\s/, '')));
                     i++;
                 } else if (currTrim === '') {
                     let j = i + 1;
-                    while(j < lines.length && lines[j].trim() === '') j++;
-                    if (j < lines.length && /^[-*]\s/.test(lines[j].trim())) {
-                        i = j; 
-                    } else { break; }
+                    while (j < lines.length && lines[j].trim() === '') j++;
+                    if (j < lines.length && /^[-*]\s/.test(lines[j].trim())) { i = j; }
+                    else { break; }
                 } else { break; }
             }
-            finalHtml += SALT_STYLE.renderList(listHtml);
+            finalHtml += SALT_STYLE.renderList(items);
             continue;
         }
 
         pGroup.push(formatInline(trimmed));
         i++;
     }
-    
-    flushP(); 
+
+    flushP();
     finalHtml += SALT_STYLE.renderFooter();
 
-    return `<section style="background-color: ${SALT_STYLE.bgPaper}; padding: 10px 0; font-size: 15px; color: ${SALT_STYLE.textColor}; font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;">${finalHtml}</section><p><br></p>`;
+    const paperLayer = SALT_STYLE.paperLayer || '';
+
+    return `<section style="position:relative;background-color:${SALT_STYLE.bgPaper};padding:10px 0;font-size:15px;color:${SALT_STYLE.textColor};font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue','PingFang SC','Hiragino Sans GB','Microsoft YaHei UI','Microsoft YaHei',Arial,sans-serif;">${paperLayer}<section style="position:relative;">${finalHtml}</section></section><p><br></p>`;
 }

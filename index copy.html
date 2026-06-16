@@ -5,49 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>心理盐 · 公众号排版工具</title>
 <link rel="stylesheet" href="style.css">
-<style>
-  /* 主题选择器样式 */
-  .theme-switcher {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .theme-switcher label {
-    font-size: 12px;
-    color: #888;
-    white-space: nowrap;
-  }
-  #theme-select {
-    font-size: 13px;
-    padding: 4px 8px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    background: #fff;
-    color: #444;
-    cursor: pointer;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  #theme-select:hover,
-  #theme-select:focus {
-    border-color: #7DADA0;
-  }
-</style>
 </head>
 <body>
 
 <header class="topbar">
   <span class="logo">🧂 心理盐排版</span>
   <div class="topbar-actions">
-
-    <!-- 主题切换器 -->
-    <div class="theme-switcher">
-      <label for="theme-select">风格</label>
-      <select id="theme-select">
-        <!-- 由 app.js 动态渲染 THEMES 里的选项 -->
-      </select>
-    </div>
-
     <button id="btn-save-tpl">💾 保存模板</button>
     <button id="btn-load-tpl">📂 加载模板</button>
     <button id="btn-copy" class="primary">📋 复制到公众号</button>

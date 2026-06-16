@@ -1,8 +1,8 @@
 // app.js — 主逻辑
 
 const App = (() => {
-  const editor  = document.getElementById('md-editor');
-  const preview = document.getElementById('preview-box');
+  const editor   = document.getElementById('md-editor');
+  const preview  = document.getElementById('preview-box');
 
   // ── 从 Markdown 提取标题 ──
   function extractTitle(md) {
@@ -12,7 +12,8 @@ const App = (() => {
 
   // ── 实时预览 ──
   function renderPreview() {
-    preview.innerHTML = saltParser(editor.value, null);
+    const md = editor.value;
+    preview.innerHTML = saltParser(md, null);
   }
 
   // ── 封面 ──
@@ -23,6 +24,7 @@ const App = (() => {
 
   editor.addEventListener('input', () => {
     renderPreview();
+    // 仅当标题输入框为空或与上次自动填入一致时，才同步更新
     const titleInput = document.getElementById('cover-title-input');
     const autoTitle = extractTitle(editor.value);
     if (!titleInput.dataset.manualEdit) {
@@ -30,12 +32,14 @@ const App = (() => {
     }
   });
 
+  // 用户手动编辑标题框后，不再自动同步
   document.getElementById('cover-title-input').addEventListener('input', (e) => {
     e.target.dataset.manualEdit = '1';
   });
 
   // ── 复制到公众号 ──
   document.getElementById('btn-copy').addEventListener('click', () => {
+    // 用当前canvas封面重新渲染一次，把base64注入
     const coverBase64 = CoverGen.getDataURL();
     preview.innerHTML = saltParser(editor.value, coverBase64);
 
@@ -47,40 +51,12 @@ const App = (() => {
     document.execCommand('copy');
     sel.removeAllRanges();
 
+    // 恢复预览（不带封面base64的普通预览）
     renderPreview();
     showToast();
   });
 
-  // ── 主题切换 ──────────────────────────────────────────────────
-  const THEME_STORAGE_KEY = 'salt_active_theme';
-  const themeSelect = document.getElementById('theme-select');
-
-  // 用 THEMES 填充下拉选项
-  Object.entries(THEMES).forEach(([key, theme]) => {
-    const opt = document.createElement('option');
-    opt.value = key;
-    opt.textContent = theme.label;
-    themeSelect.appendChild(opt);
-  });
-
-  // 恢复上次选择的主题
-  const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-  if (savedTheme && THEMES[savedTheme]) {
-    themeSelect.value = savedTheme;
-    window.SALT_STYLE = THEMES[savedTheme].style;
-  }
-
-  // 切换时：更新 SALT_STYLE → 重新渲染预览 → 记住选择
-  themeSelect.addEventListener('change', () => {
-    const key = themeSelect.value;
-    if (!THEMES[key]) return;
-    window.SALT_STYLE = THEMES[key].style;
-    localStorage.setItem(THEME_STORAGE_KEY, key);
-    renderPreview();
-  });
-  // ──────────────────────────────────────────────────────────────
-
-  // ── 模板管理（保存/加载 Markdown 内容，与风格无关）──
+  // ── 模板管理 ──
   const STORAGE_KEY = 'salt_templates';
 
   function getTemplates() {
@@ -164,7 +140,7 @@ const App = (() => {
 - 列表项一
 - 列表项二
 
-**加粗文字**
+** 加粗文字 **
 
 [card]
 心理盐的陪伴，从这里开始。
