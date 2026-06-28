@@ -32,6 +32,183 @@
   #theme-select:focus {
     border-color: #7DADA0;
   }
+
+  /* 查找替换面板 */
+  .fr-panel {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    width: 360px;
+    background: #fff;
+    border: 1px solid #c8dbd8;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.13);
+    z-index: 1000;
+    font-size: 13px;
+  }
+  .fr-panel.hidden { display: none; }
+  .fr-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: #f0f7f6;
+    border-bottom: 1px solid #c8dbd8;
+    border-radius: 10px 10px 0 0;
+    font-weight: 600;
+    color: #3e613d;
+  }
+  .fr-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #888;
+    line-height: 1;
+    padding: 0 4px;
+  }
+  .fr-close:hover { color: #333; }
+  .fr-body { padding: 12px 14px; }
+  .fr-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .fr-label {
+    width: 28px;
+    color: #666;
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .fr-input-wrap {
+    position: relative;
+    flex: 1;
+    display: flex;
+  }
+  .fr-input-wrap input {
+    flex: 1;
+    padding: 6px 30px 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .fr-input-wrap input:focus { border-color: #7DADA0; }
+  .fr-hist-btn {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    font-size: 13px;
+    padding: 2px 4px;
+  }
+  .fr-hist-btn:hover { color: #3e613d; }
+  .fr-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #c8dbd8;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 1001;
+    max-height: 180px;
+    overflow-y: auto;
+  }
+  .fr-dropdown.hidden { display: none; }
+  .fr-dropdown-item {
+    padding: 7px 10px;
+    cursor: pointer;
+    color: #444;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .fr-dropdown-item:hover { background: #f0f7f6; color: #3e613d; }
+  .fr-dropdown-empty {
+    padding: 8px 10px;
+    color: #aaa;
+    font-size: 12px;
+  }
+  .fr-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .fr-actions button {
+    flex: 1;
+    padding: 6px 0;
+    border: 1px solid #7DADA0;
+    border-radius: 6px;
+    background: #fff;
+    color: #3e613d;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.15s;
+  }
+  .fr-actions button:hover { background: #e8f5f3; }
+  .fr-actions #fr-replace-all {
+    background: #3e613d;
+    color: #fff;
+    border-color: #3e613d;
+  }
+  .fr-actions #fr-replace-all:hover { background: #2e4a2d; }
+  .fr-actions #fr-undo:disabled { opacity: 0.4; cursor: default; }
+  .fr-actions #fr-undo:not(:disabled):hover { background: #fff3f0; border-color: #e08070; color: #c0503a; }
+  .fr-status {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #888;
+    min-height: 16px;
+  }
+
+  /* Markdown 工具栏 */
+  .md-toolbar {
+    display: flex;
+    gap: 4px;
+    padding: 5px 8px;
+    background: #f4f7f4;
+    border-bottom: 1px solid #e0e8e0;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+  .md-toolbar button {
+    padding: 3px 9px;
+    border: 1px solid #c8dbc8;
+    border-radius: 4px;
+    background: #fff;
+    color: #3e613d;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-family: monospace;
+    white-space: nowrap;
+  }
+  .md-toolbar button:hover { background: #e8f5f3; border-color: #7DADA0; }
+  .md-toolbar .sep { width: 1px; background: #d0e0d0; margin: 3px 2px; }
+
+  /* 编辑区底部 */
+  .editor-footer {
+    padding: 4px 12px;
+    font-size: 11px;
+    color: #bbb;
+    text-align: right;
+    background: #fafafa;
+    border-top: 1px solid #eee;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  #save-indicator { transition: color 0.3s; }
+  #save-indicator.saved { color: #7DADA0; }
 </style>
 </head>
 <body>
@@ -48,8 +225,7 @@
       </select>
     </div>
 
-    <button id="btn-save-tpl">💾 保存模板</button>
-    <button id="btn-load-tpl">📂 加载模板</button>
+    <button id="btn-find-replace">🔍 查找替换</button>
     <button id="btn-copy" class="primary">📋 复制到公众号</button>
   </div>
 </header>
@@ -58,8 +234,21 @@
 
   <!-- 左：编辑区 -->
   <aside class="panel-left">
-    <div class="panel-title">Markdown 编辑</div>
+    <div class="panel-title">Markdown 编辑 <span style="font-size:11px;color:#999;font-weight:normal;">Ctrl+F 查找替换</span></div>
+    <div class="md-toolbar">
+      <button data-action="heading" title="章节标题（# 开头）"># 标题</button>
+      <button data-action="bold"    title="加粗（**文字**）"><b>粗体</b></button>
+      <button data-action="quote"   title="引用（> 开头）">❝ 引用</button>
+      <button data-action="list"    title="列表（- 开头）">• 列表</button>
+      <div class="sep"></div>
+      <button data-action="card"    title="Card 高亮块">[ card ]</button>
+    </div>
     <textarea id="md-editor" spellcheck="false" placeholder="在这里写 Markdown..."></textarea>
+    <div class="editor-footer">
+      <span id="char-count">0</span> 字
+      <span>·</span>
+      <span id="save-indicator">自动保存</span>
+    </div>
   </aside>
 
   <!-- 中：封面生成 -->
@@ -86,12 +275,36 @@
 
 </main>
 
-<!-- 模板管理弹窗 -->
-<div id="modal-tpl" class="modal hidden">
-  <div class="modal-inner">
-    <div class="modal-title">模板管理</div>
-    <div id="tpl-list"></div>
-    <button id="modal-close">关闭</button>
+<!-- 查找替换面板 -->
+<div id="find-replace-panel" class="fr-panel hidden">
+  <div class="fr-header">
+    <span>🔍 查找替换</span>
+    <button id="fr-close" class="fr-close">×</button>
+  </div>
+  <div class="fr-body">
+    <div class="fr-row">
+      <label class="fr-label">查找</label>
+      <div class="fr-input-wrap">
+        <input id="fr-find" type="text" placeholder="查找内容…" autocomplete="off">
+        <button class="fr-hist-btn" data-target="fr-find" title="历史记录">▾</button>
+        <div class="fr-dropdown hidden" id="fr-find-dropdown"></div>
+      </div>
+    </div>
+    <div class="fr-row">
+      <label class="fr-label">替换</label>
+      <div class="fr-input-wrap">
+        <input id="fr-replace" type="text" placeholder="替换为…" autocomplete="off">
+        <button class="fr-hist-btn" data-target="fr-replace" title="历史记录">▾</button>
+        <div class="fr-dropdown hidden" id="fr-replace-dropdown"></div>
+      </div>
+    </div>
+    <div class="fr-actions">
+      <button id="fr-replace-all">替换全部</button>
+      <button id="fr-find-next">查找下一个</button>
+      <button id="fr-replace-one">替换</button>
+      <button id="fr-undo" disabled title="撤销上一次替换">↩ 撤销</button>
+    </div>
+    <div id="fr-status" class="fr-status"></div>
   </div>
 </div>
 
