@@ -81,6 +81,11 @@ const App = (() => {
     saveDraft();
   }
 
+  // mousedown 阻止 textarea 失焦，从而保留选区
+  document.querySelector('.md-toolbar').addEventListener('mousedown', (e) => {
+    if (e.target.closest('[data-action]')) e.preventDefault();
+  });
+
   document.querySelector('.md-toolbar').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-action]');
     if (!btn) return;
@@ -98,17 +103,27 @@ const App = (() => {
   });
 
   // ── 复制到公众号 ──
-  document.getElementById('btn-copy').addEventListener('click', () => {
+  document.getElementById('btn-copy').addEventListener('click', async () => {
     const coverBase64 = CoverGen.getDataURL();
     preview.innerHTML = saltParser(editor.value, coverBase64);
 
-    const range = document.createRange();
-    range.selectNodeContents(preview);
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-    document.execCommand('copy');
-    sel.removeAllRanges();
+    const html = preview.innerHTML;
+
+    try {
+      // 优先使用 Clipboard API（Chrome 86+）
+      await navigator.clipboard.write([
+        new ClipboardItem({ 'text/html': new Blob([html], { type: 'text/html' }) })
+      ]);
+    } catch {
+      // 降级：execCommand（旧版浏览器 / 部分 Safari）
+      const range = document.createRange();
+      range.selectNodeContents(preview);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      document.execCommand('copy');
+      sel.removeAllRanges();
+    }
 
     renderPreview();
     showToast();
