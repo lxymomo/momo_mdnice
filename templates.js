@@ -127,7 +127,7 @@ function buildTheme({
     renderRef(innerHtml) {
       return `
       <section style="margin:48px 20px 24px;box-sizing:border-box;">
-        <p style="margin:0 0 10px;font-size:10px;color:${accent};letter-spacing:3px;opacity:0.5;">Reference</p>
+        <p style="margin:0 0 10px;font-size:10px;color:${accent};letter-spacing:3px;opacity:0.5;">参考文献</p>
         <section style="line-height:1.7;color:${textColor};opacity:0.5;font-size:12px;letter-spacing:0.2px;">
           ${innerHtml}
         </section>
