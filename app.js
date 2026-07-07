@@ -95,6 +95,7 @@ const App = (() => {
       case 'quote':   insertLinePrefix('> '); break;
       case 'list':    insertLinePrefix('- '); break;
       case 'card':    insertMd('[card]\n', '\n[/card]', '输入卡片内容'); break;
+      case 'ref':     insertMd('[ref]\n', '\n[/ref]', '[1] 作者. 文章标题. 期刊, 年份.'); break;
     }
   });
 
@@ -180,7 +181,7 @@ const App = (() => {
 **加粗文字**
 
 [card]
-心理盐的陪伴，从这里开始。
+
 [/card]
 `;
 

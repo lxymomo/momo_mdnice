@@ -12,10 +12,16 @@ function formatInline(text) {
 
 function saltParser(mdText, coverBase64 = null) {
     let cardBlocks = [];
+    let refBlocks  = [];
 
     mdText = mdText.replace(/\n*\[card\]([\s\S]*?)\[\/card\]\n*/g, function(match, p1) {
         cardBlocks.push(p1.trim());
         return `\n__CARD_${cardBlocks.length - 1}__\n`;
+    });
+
+    mdText = mdText.replace(/\n*\[ref\]([\s\S]*?)\[\/ref\]\n*/g, function(match, p1) {
+        refBlocks.push(p1.trim());
+        return `\n__REF_${refBlocks.length - 1}__\n`;
     });
 
     let lines = mdText.split('\n');
@@ -75,6 +81,21 @@ function saltParser(mdText, coverBase64 = null) {
                           : `<p style="margin:0;"><br></p>`;
             }).join('');
             finalHtml += SALT_STYLE.renderCard(cardHtml);
+            i++;
+            continue;
+        }
+
+        // Ref
+        let refMatch = trimmed.match(/^__REF_(\d+)__$/);
+        if (refMatch) {
+            flushP();
+            let refContent = refBlocks[parseInt(refMatch[1])];
+            let refHtml = refContent.split('\n').map(l => {
+                let lt = l.trim();
+                return lt ? `<p style="margin:0 0 4px 0;">${formatInline(lt)}</p>`
+                          : `<p style="margin:0;"><br></p>`;
+            }).join('');
+            finalHtml += SALT_STYLE.renderRef(refHtml);
             i++;
             continue;
         }
