@@ -100,22 +100,19 @@ function saltParser(mdText, coverBase64 = null) {
             continue;
         }
 
-        // ── 标题：注意顺序，长前缀优先 ──────────────────────────────
-        // #### → H3（最小层级）
+        // ── 标题 ──
         if (trimmed.startsWith('#### ')) {
             flushP();
             finalHtml += SALT_STYLE.renderH3(trimmed.replace(/^####\s+/, ''));
             i++;
             continue;
         }
-        // ### → H2（小节）
         if (trimmed.startsWith('### ')) {
             flushP();
             finalHtml += SALT_STYLE.renderH2(trimmed.replace(/^###\s+/, ''));
             i++;
             continue;
         }
-        // ## → H1（大章节，自动序号）
         if (trimmed.startsWith('## ')) {
             flushP();
             h1Counter++;
@@ -123,14 +120,12 @@ function saltParser(mdText, coverBase64 = null) {
             i++;
             continue;
         }
-        // # → 文章大标题，只渲染文字，不加序号，不参与计数
         if (trimmed.startsWith('# ')) {
             flushP();
             finalHtml += SALT_STYLE.renderTitle(trimmed.replace(/^#\s+/, ''));
             i++;
             continue;
         }
-        // ─────────────────────────────────────────────────────────────
 
         // 引用
         if (trimmed.startsWith('>')) {
@@ -154,7 +149,7 @@ function saltParser(mdText, coverBase64 = null) {
             continue;
         }
 
-        // 列表：收集所有连续项，整体传给 renderList
+        // 列表
         if (/^[-*]\s/.test(trimmed)) {
             flushP();
             let items = [];
@@ -181,7 +176,6 @@ function saltParser(mdText, coverBase64 = null) {
     flushP();
     finalHtml += SALT_STYLE.renderFooter();
 
-    const paperLayer = SALT_STYLE.paperLayer || '';
-
-    return `<section style="position:relative;background-color:${SALT_STYLE.bgPaper};padding:10px 0;font-size:15px;color:${SALT_STYLE.textColor};font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue','PingFang SC','Hiragino Sans GB','Microsoft YaHei UI','Microsoft YaHei',Arial,sans-serif;">${paperLayer}<section style="position:relative;">${finalHtml}</section></section><p><br></p>`;
+    // 已将 background-color 改为透明 (transparent)，并将上下内外部 padding 清零以去掉页边距
+    return `<section style="position:relative;background-color:transparent;padding:0;font-size:15px;color:${SALT_STYLE.textColor};font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue','PingFang SC','Hiragino Sans GB','Microsoft YaHei UI','Microsoft YaHei',Arial,sans-serif;"><section style="position:relative;">${finalHtml}</section></section><p><br></p>`;
 }
